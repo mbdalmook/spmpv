@@ -19,7 +19,7 @@ export function TopBar({ sidebarOpen, onToggleSidebar }: TopBarProps) {
   const { user, role, signOut } = useAuth();
   const [signingOut, setSigningOut] = useState(false);
 
-  const initial = user?.email ? user.email[0].toUpperCase() : 'U';
+  const initial = user?.email?.[0]?.toUpperCase() ?? 'U';
   const displayRole = role ?? 'User';
 
   async function handleSignOut() {

@@ -112,19 +112,21 @@ export function GradesPage() {
     setDeleteTarget(null);
   }
 
-  const columns = [
-    { header: 'Level', accessor: (g: Grade) => g.level },
-    { header: 'Grade Name', accessor: (g: Grade) => g.name },
-    { header: 'Headcount', accessor: (g: Grade) => gradeStaffCount(g.id) },
-    { header: 'Departments', accessor: (g: Grade) => gradeDeptCount(g.id) },
+  const columns: import('../../components/DataTable').Column<Grade>[] = [
+    { key: 'level', header: 'Level', render: (g) => <span>{g.level}</span> },
+    { key: 'name', header: 'Grade Name', render: (g) => g.name },
+    { key: 'headcount', header: 'Headcount', render: (g) => <span>{gradeStaffCount(g.id)}</span> },
+    { key: 'departments', header: 'Departments', render: (g) => <span>{gradeDeptCount(g.id)}</span> },
     {
+      key: 'status',
       header: 'Status',
-      accessor: (g: Grade) =>
+      render: (g) =>
         gradeStaffCount(g.id) > 0 ? <Badge variant="success">Active</Badge> : <Badge variant="neutral">Unused</Badge>,
     },
     {
+      key: 'actions',
       header: 'Actions',
-      accessor: (g: Grade) => (
+      render: (g) => (
         <div className="flex items-center gap-2">
           <button onClick={() => openEdit(g)} className="p-1 text-gray-400 hover:text-blue-600 rounded" title="Edit">
             <Pencil className="w-4 h-4" />
@@ -152,8 +154,7 @@ export function GradesPage() {
       <SummaryCards cards={summaryCards} />
       <DataTable columns={columns} data={grades} emptyMessage="No grades defined" />
 
-      {showAddModal && (
-        <Modal title="Add Grade" onClose={() => setShowAddModal(false)}>
+      <Modal isOpen={showAddModal} title="Add Grade" onClose={() => setShowAddModal(false)}>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Grade Name <span className="text-red-500">*</span></label>
@@ -172,10 +173,8 @@ export function GradesPage() {
             </div>
           </div>
         </Modal>
-      )}
 
-      {editingGrade && (
-        <Modal title="Edit Grade" onClose={() => setEditingGrade(null)}>
+      <Modal isOpen={!!editingGrade} title="Edit Grade" onClose={() => setEditingGrade(null)}>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Grade Name <span className="text-red-500">*</span></label>
@@ -194,13 +193,11 @@ export function GradesPage() {
             </div>
           </div>
         </Modal>
-      )}
 
-      {deleteTarget && (
-        <Modal title="Delete Grade" onClose={() => setDeleteTarget(null)}>
+      <Modal isOpen={!!deleteTarget} title="Delete Grade" onClose={() => setDeleteTarget(null)}>
           <div className="space-y-4">
             <p className="text-sm text-gray-600">
-              Are you sure you want to delete grade <span className="font-medium text-gray-900">"{deleteTarget.name}" (Level {deleteTarget.level})</span>? This action cannot be undone.
+              Are you sure you want to delete grade <span className="font-medium text-gray-900">"{deleteTarget?.name}" (Level {deleteTarget?.level})</span>? This action cannot be undone.
             </p>
             <div className="flex justify-end gap-3">
               <button onClick={() => setDeleteTarget(null)} className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">Cancel</button>
@@ -211,7 +208,6 @@ export function GradesPage() {
             </div>
           </div>
         </Modal>
-      )}
     </div>
   );
 }

@@ -108,16 +108,18 @@ export function ComplianceTagsPage() {
     setDeleteTarget(null);
   }
 
-  const columns = [
-    { header: 'Tag Name', accessor: (tag: ComplianceTag) => tag.name },
+  const columns: import('../../components/DataTable').Column<ComplianceTag>[] = [
+    { key: 'name', header: 'Tag Name', render: (tag) => tag.name },
     {
+      key: 'status',
       header: 'Status',
-      accessor: (tag: ComplianceTag) =>
+      render: (tag) =>
         usedTagIds.has(tag.id) ? <Badge variant="success">Active</Badge> : <Badge variant="neutral">Unused</Badge>,
     },
     {
+      key: 'actions',
       header: 'Actions',
-      accessor: (tag: ComplianceTag) => (
+      render: (tag) => (
         <div className="flex items-center gap-2">
           <button onClick={() => openEdit(tag)} className="p-1 text-gray-400 hover:text-blue-600 rounded" title="Edit">
             <Pencil className="w-4 h-4" />
@@ -153,8 +155,7 @@ export function ComplianceTagsPage() {
       <SummaryCards cards={summaryCards} />
       <DataTable columns={columns} data={tags} emptyMessage="No compliance tags defined" />
 
-      {showAddModal && (
-        <Modal title="Add Compliance Tag" onClose={() => setShowAddModal(false)}>
+      <Modal isOpen={showAddModal} title="Add Compliance Tag" onClose={() => setShowAddModal(false)}>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Tag Name <span className="text-red-500">*</span></label>
@@ -169,10 +170,8 @@ export function ComplianceTagsPage() {
             </div>
           </div>
         </Modal>
-      )}
 
-      {editingTag && (
-        <Modal title="Edit Compliance Tag" onClose={() => setEditingTag(null)}>
+      <Modal isOpen={!!editingTag} title="Edit Compliance Tag" onClose={() => setEditingTag(null)}>
           <div className="space-y-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Tag Name <span className="text-red-500">*</span></label>
@@ -187,13 +186,11 @@ export function ComplianceTagsPage() {
             </div>
           </div>
         </Modal>
-      )}
 
-      {deleteTarget && (
-        <Modal title="Delete Compliance Tag" onClose={() => setDeleteTarget(null)}>
+      <Modal isOpen={!!deleteTarget} title="Delete Compliance Tag" onClose={() => setDeleteTarget(null)}>
           <div className="space-y-4">
             <p className="text-sm text-gray-600">
-              Are you sure you want to delete <span className="font-medium text-gray-900">"{deleteTarget.name}"</span>? This action cannot be undone.
+              Are you sure you want to delete <span className="font-medium text-gray-900">"{deleteTarget?.name}"</span>? This action cannot be undone.
             </p>
             <div className="flex justify-end gap-3">
               <button onClick={() => setDeleteTarget(null)} className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">Cancel</button>
@@ -204,7 +201,6 @@ export function ComplianceTagsPage() {
             </div>
           </div>
         </Modal>
-      )}
     </div>
   );
 }

@@ -140,16 +140,18 @@ export function CompanyNumbersPage() {
     setDeleteTarget(null);
   }
 
-  const columns = [
-    { header: 'Phone Number', accessor: (n: CompanyNumber) => <span className="font-mono text-sm">{n.phoneNumber}</span> },
+  const columns: import('../../components/DataTable').Column<CompanyNumber>[] = [
+    { key: 'phoneNumber', header: 'Phone Number', render: (n) => <span className="font-mono text-sm">{n.phoneNumber}</span> },
     {
+      key: 'status',
       header: 'Status',
-      accessor: (n: CompanyNumber) =>
+      render: (n) =>
         isAllocated(n.id) ? <Badge variant="info">Allocated</Badge> : <Badge variant="success">Available</Badge>,
     },
     {
+      key: 'actions',
       header: 'Actions',
-      accessor: (n: CompanyNumber) => (
+      render: (n) => (
         <button onClick={() => setDeleteTarget(n)} className="p-1 text-gray-400 hover:text-red-600 rounded" title="Delete" disabled={isAllocated(n.id)}>
           <Trash2 className="w-4 h-4" />
         </button>
@@ -175,8 +177,7 @@ export function CompanyNumbersPage() {
       </div>
       <DataTable columns={columns} data={filtered} emptyMessage="No company numbers defined" />
 
-      {showAddModal && (
-        <Modal title="Add Company Numbers" onClose={() => setShowAddModal(false)}>
+      <Modal isOpen={showAddModal} title="Add Company Numbers" onClose={() => setShowAddModal(false)}>
           <div className="space-y-4">
             <div className="flex border-b border-gray-200">
               <button onClick={() => setAddMode('single')} className={`px-4 py-2 text-sm font-medium border-b-2 transition-colors ${addMode === 'single' ? 'border-blue-600 text-blue-600' : 'border-transparent text-gray-500 hover:text-gray-700'}`}>
@@ -229,13 +230,11 @@ export function CompanyNumbersPage() {
             </div>
           </div>
         </Modal>
-      )}
 
-      {deleteTarget && (
-        <Modal title="Delete Number" onClose={() => setDeleteTarget(null)}>
+      <Modal isOpen={!!deleteTarget} title="Delete Number" onClose={() => setDeleteTarget(null)}>
           <div className="space-y-4">
             <p className="text-sm text-gray-600">
-              Are you sure you want to delete <span className="font-mono font-medium text-gray-900">{deleteTarget.phoneNumber}</span>? This action cannot be undone.
+              Are you sure you want to delete <span className="font-mono font-medium text-gray-900">{deleteTarget?.phoneNumber}</span>? This action cannot be undone.
             </p>
             <div className="flex justify-end gap-3">
               <button onClick={() => setDeleteTarget(null)} className="px-4 py-2 text-sm text-gray-600 hover:text-gray-800">Cancel</button>
@@ -246,7 +245,6 @@ export function CompanyNumbersPage() {
             </div>
           </div>
         </Modal>
-      )}
     </div>
   );
 }
